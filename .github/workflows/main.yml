@@ -1,9 +1,8 @@
-
-name: Build ShakalCam APK
+name: Build ShakalCam
 
 on:
-  workflow_dispatch:
   push:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -11,6 +10,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -23,12 +23,14 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - uses: android-actions/setup-android@v3
-
       - name: Build APK
-        run: gradle assembleDebug
+        run: |
+          export ANDROID_HOME="$ANDROID_SDK_ROOT"
+          gradle assembleDebug
 
       - uses: actions/upload-artifact@v4
         with:
           name: ShakalCam-APK
-          path: app/build
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          
